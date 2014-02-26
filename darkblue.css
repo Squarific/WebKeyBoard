@@ -1,3 +1,20 @@
 .webkeyboard_darkblue_keyboard {
+	position:fixed;
+	left:0;
+	bottom:0;
+	width:100%;
 	background:gray;
+	overflow:hidden;
+	white-space: nowrap;
+}
+.webkeyboard_darkblue_button {
+	display:inline-block;
+	text-align:center;
+	background:rgb(82, 82, 85);
+}
+.webkeyboard_darkblue_button:hover {
+	background:rgb(69, 69, 71);
+}
+.webkeyboard_darkblue_button_active {
+	background:rgb(4, 110, 124);
 }

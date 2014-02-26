@@ -1,24 +1,24 @@
-function WebKeyBoard (target, keyboardstyle, generalstyle) {
+function WebKeyBoard (target, settings, keyboardlayout) {
 	this.id = Date.now() + "_KEYBOARD_" + Math.round(Math.random() * 1e6);
 	this.target = target;
-	this.keyboardstyle = keyboardstyle || this.azertyKeyboardstyle;
-	this.generalstyle = generalstyle || this.defaultGeneralstyle;
+	this.keyboardlayout = keyboardlayout || this.azertyKeyboardlayout;
+	this.settings = settings || this.defaultsettings;
 	this.shift = false;
+	this.addToDom();
 };
 
 WebKeyBoard.prototype.domButton = function button (buttonId) {
 	var button = document.createElement("div");
-	//button.addEventListener();
-	button.style.width = this.generalstyle.keyWidth + "px";
-	button.style.height = this.generalstyle.keyHeight + "px";
-	button.classList.add("webkeyboard_" + this.generalstyle.themeName + "_button");
+	button.style.width = this.settings.keyWidth + "px";
+	button.style.height = this.settings.keyHeight + "px";
+	button.classList.add("webkeyboard_" + this.settings.themeName + "_button");
 	return button;
 };
 
 WebKeyBoard.prototype.domButtonRow = function buttonRow (buttonList) {
 	var row = document.createElement("div");
-	row.classList.add("webkeyboard_" + this.generalstyle.themeName + "_row");
-	for (var button = 0; buttonList.length; button++) {
+	row.classList.add("webkeyboard_" + this.settings.themeName + "_row");
+	for (var button = 0; button < buttonList.length; button++) {
 		row.appendChild(this.domButton(buttonList[button]));
 	}
 	return row;
@@ -26,33 +26,58 @@ WebKeyBoard.prototype.domButtonRow = function buttonRow (buttonList) {
 
 WebKeyBoard.prototype.domKeyboard = function () {
 	var domKeyboard = document.createElement("div");
-	domKeyBoard.classList.add("webkeyboard_" + this.generalstyle.themeName + "_keyboard"");
-	for (var row = 0; row < this.keyboardstyle.length; row++) {
-		var domRow = this.domButtonRow(this.keyboardstyle[row]);
+	domKeyboard.id = this.id;
+	domKeyboard.classList.add("webkeyboard_" + this.settings.themeName + "_keyboard");
+	for (var row = 0; row < this.keyboardlayout.length; row++) {
+		domKeyboard.appendChild(this.domButtonRow(this.keyboardlayout[row]));
 	}
-	return domKeyBoard;
+	return domKeyboard;
+};
+
+WebKeyBoard.prototype.pusher = function () {
+	var pusher = document.createElement("div");
+	var keyboard = document.getElementById(this.id);
+	pusher.style.height = keyboard.offsetHeight + "px";
+	return pusher;
+};
+
+WebKeyBoard.prototype.addToDom = function () {
+	this.removeFromDom();
+	document.body.appendChild(this.domKeyboard());
+	document.body.appendChild(this.pusher());
+};
+
+WebKeyBoard.prototype.removeFromDom = function () {
+	var div = document.getElementById(this.id)
+	if (div) {
+		div.parentNode.removeChild(div);
+	}
 };
 
 WebKeyBoard.prototype.changeTarget = function changeTarget (target) {
 	this.target = target;
 };
 
-WebKeyBoard.prototype.changeKeyboardstyle = function changeKeyboardstyle (keyboardstyle) {
-	this.keyboardstyle = keyboardstyle;
+WebKeyBoard.prototype.changeKeyboardlayout = function changeKeyboardlayout (keyboardlayout) {
+	this.keyboardlayout = keyboardlayout;
 };
 
-WebKeyBoard.prototype.changeGeneralstyle = function changeGeneralstyle (generalstyle) {
-	this.generalstyle = generalstyle;
+WebKeyBoard.prototype.changesettings = function changesettings (settings) {
+	this.settings = settings;
 };
 
-WebKeyBoard.prototype.azertyKeyboardstyle = [
+WebKeyBoard.prototype.changesetting = function changesettings (setting, value) {
+	this.settings[setting] = value;
+};
+
+WebKeyBoard.prototype.azertyKeyboardlayout = [
 	[65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64],
 	[65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64],
 	[65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64],
 	[65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64]
 ];
 
-WebKeyBoard.prototype.defaultGeneralStyle = {
+WebKeyBoard.prototype.defaultsettings = {
 	keyHeight: 50,
 	keyWidth: 80,
 	scrollbarHeight: 20,
@@ -60,47 +85,53 @@ WebKeyBoard.prototype.defaultGeneralStyle = {
 	themeName: "darkblue"
 };
 
-WebKeyBoard.prototype.specialKeys = {
-	left: {
-		character: "&#x25B2;",
-		onpress: function (target) {
-			
-		}
-	},
-	up: {
-		character: "&#x25B2;",
-		onpress: function (target) {
-			
-		}
-	},
-	down: {
-		character: "&#x25B2;",
-		onpress: function (target) {
-			
-		}
-	},
-	right: {
-		character: "&#x25B2;",
-		onpress: function (target) {
-			
-		}
-	},
-	tab: {
-		character: "&#x25B2;",
-		onpress: function (target) {
-			
-		}
-	},
-	enter: {
-		
-	},
-	"delete": {
+WebKeyBoard.prototype.specialKeys = {};
+
+WebKeyBoard.prototype.specialKeys.left = {
+	character: "&#x25B2;",
+	onpress: function (target) {
 		
 	}
-	shift: {
-		character: "&#8679;",
-		onpress: function (target) {
-			
-		}
+};
+
+WebKeyBoard.prototype.specialKeys.up = {
+	character: "&#x25B2;",
+	onpress: function (target) {
+		
+	}
+};
+
+WebKeyBoard.prototype.specialKeys.down = {
+	character: "&#x25B2;",
+	onpress: function (target) {
+		
+	}
+};
+
+WebKeyBoard.prototype.specialKeys.delete = {
+	character: "&#x25B2;",
+	onpress: function (target) {
+		
+	}
+};
+
+WebKeyBoard.prototype.specialKeys.tab = {
+	character: "&#x25B2;",
+	onpress: function (target) {
+		
+	}
+};
+
+WebKeyBoard.prototype.specialKeys.shift = {
+	character: "&#x25B2;",
+	onpress: function (target) {
+		
+	}
+};
+
+WebKeyBoard.prototype.specialKeys.enter = {
+	character: "&#x25B2;",
+	onpress: function (target) {
+		
 	}
 };
