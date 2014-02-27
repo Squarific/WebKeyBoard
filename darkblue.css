@@ -3,17 +3,30 @@
 	left:0;
 	bottom:0;
 	width:100%;
-	background:gray;
+	box-sizing:border-box;
 	overflow:hidden;
+	border:7px rgb(64, 81, 99) solid;
 	white-space: nowrap;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 .webkeyboard_darkblue_button {
 	display:inline-block;
+	border:1px solid rgb(64, 81, 99);
 	text-align:center;
-	background:rgb(82, 82, 85);
+	color:rgb(213, 213, 213);
+	font-family: 'Varela Round', sans-serif;
+	text-shadow: 0px 0px 18px rgba(111, 148, 153, 0.3);
+	background:rgb(52, 71, 88);
+	cursor:pointer;
 }
 .webkeyboard_darkblue_button:hover {
-	background:rgb(69, 69, 71);
+	background:rgb(20, 43, 63);
+	color:rgb(241, 241, 241);
 }
 .webkeyboard_darkblue_button_active {
 	background:rgb(4, 110, 124);

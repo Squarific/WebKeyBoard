@@ -4,6 +4,7 @@ function WebKeyBoard (target, settings, keyboardlayout) {
 	this.keyboardlayout = keyboardlayout || this.azertyKeyboardlayout;
 	this.settings = settings || this.defaultsettings;
 	this.shift = false;
+	this.moved = false;
 	this.addToDom();
 };
 
@@ -11,7 +12,16 @@ WebKeyBoard.prototype.domButton = function button (buttonId) {
 	var button = document.createElement("div");
 	button.style.width = this.settings.keyWidth + "px";
 	button.style.height = this.settings.keyHeight + "px";
+	button.style.fontSize = this.settings.keyHeight - 10 + "px";
 	button.classList.add("webkeyboard_" + this.settings.themeName + "_button");
+	if (this.specialKeys[buttonId]) {
+		button.innerHTML = this.specialKeys[buttonId].character;
+		button.addEventListener("");
+	} else if (typeof buttonId === "number") {
+		button.appendChild(document.createTextNode(String.fromCharCode(buttonId)));
+	} else {
+		throw "Undefined special key";
+	}
 	return button;
 };
 
