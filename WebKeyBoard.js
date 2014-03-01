@@ -14,15 +14,56 @@ WebKeyBoard.prototype.domButton = function button (buttonId) {
 	button.style.height = this.settings.keyHeight + "px";
 	button.style.fontSize = this.settings.keyHeight - 10 + "px";
 	button.classList.add("webkeyboard_" + this.settings.themeName + "_button");
-	if (this.specialKeys[buttonId]) {
-		button.innerHTML = this.specialKeys[buttonId].character;
-		button.addEventListener("");
-	} else if (typeof buttonId === "number") {
-		button.appendChild(document.createTextNode(String.fromCharCode(buttonId)));
-	} else {
-		throw "Undefined special key";
-	}
+	button.addEventListener("mouseup", this.mouseUpHandler.bind(this));
+	button.addEventListener("touchend", this.touchEndHandler.bind(this));
+	button.buttonId = buttonId;
+	button.innerHTML = (this.specialKeys[buttonId]) ? this.specialKeys[buttonId].character : String.fromCharCode(buttonId);
 	return button;
+};
+
+WebKeyBoard.prototype.touchEndHandler = function touchEndHandler (event) {
+	this.mouseUpHandler ({
+		screenX: event.changedTouches[0].screenX,
+		screenY: event.changedTouches[0].screenY,
+		clientX: event.changedTouches[0].clientX,
+		clientY: event.changedTouches[0].clientY,
+		pageX: event.changedTouches[0].pageX,
+		pageY: event.changedTouches[0].pageY,
+		radiusX: event.changedTouches[0].radiusX,
+		radiusY: event.changedTouches[0].radiusY,
+		rotationAngle: event.changedTouches[0].rotationAngle,
+		force: event.changedTouches[0].force,
+		target: document.elementFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY),
+		type: event.type,
+		ctrlKey: event.ctrlKey,
+		shiftKey: event.shiftKey,
+		altKey: event.altKey,
+		metaKey: event.metaKey
+	});
+};
+
+WebKeyBoard.prototype.mouseUpHandler = function mouseUpHandler (event) {
+	if (this.specialKeys && this.specialKeys[event.target.buttonId] && typeof this.specialKeys[event.target.buttonId].pressHandler === "function") {
+		this.specialKeys[event.target.buttonId].pressHandler(this.target, event.target, this);
+	} else {
+		this.pressHandler(event.target);
+	}
+	this.moved = false;
+};
+
+WebKeyBoard.prototype.pressHandler = function pressHandler (buttonElement) {
+	if (typeof this.target === "function") {
+		this.target(buttonElement.buttonId, buttonElement);
+		return;
+	}
+	this.pressKey(String.fromCharCode(buttonElement.buttonId));
+};
+
+WebKeyBoard.prototype.pressKey = function pressKey (string) {
+	var setSelection = this.target.selectionStart + 1;
+	this.target.value = this.target.value.slice(0, this.target.selectionStart) + string + this.target.value.slice(this.target.selectionEnd);
+	this.target.focus();
+	this.target.setSelectionRange(setSelection, setSelection);
 };
 
 WebKeyBoard.prototype.domButtonRow = function buttonRow (buttonList) {
@@ -48,6 +89,7 @@ WebKeyBoard.prototype.pusher = function () {
 	var pusher = document.createElement("div");
 	var keyboard = document.getElementById(this.id);
 	pusher.style.height = keyboard.offsetHeight + "px";
+	pusher.id = this.id + "_pusher"
 	return pusher;
 };
 
@@ -58,10 +100,10 @@ WebKeyBoard.prototype.addToDom = function () {
 };
 
 WebKeyBoard.prototype.removeFromDom = function () {
-	var div = document.getElementById(this.id)
-	if (div) {
-		div.parentNode.removeChild(div);
-	}
+	var div = document.getElementById(this.id),
+		pusher = document.getElementById(this.id + "_pusher");
+	pusher ? pusher.parentNode.removeChild(pusher) : "";
+	div ? div.parentNode.removeChild(div) : "";
 };
 
 WebKeyBoard.prototype.changeTarget = function changeTarget (target) {
@@ -81,10 +123,12 @@ WebKeyBoard.prototype.changesetting = function changesettings (setting, value) {
 };
 
 WebKeyBoard.prototype.azertyKeyboardlayout = [
-	[65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64],
-	[65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64],
-	[65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64],
-	[65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64]
+	[38,233,34,39,40,167,232,33,231,224,41,45],
+	[49,50,51,52,53,54,55,56,57,48,176,95],
+	[97,122,101,114,116,121,117,105,111,112,94,36],
+	[113,115,100,102,103,104,106,107,108,109,249,181],
+	[119,120,99,118,98,110,44,59,58,61],
+	[32,32,32,32,32,32,32,32,32,32]
 ];
 
 WebKeyBoard.prototype.defaultsettings = {
@@ -99,49 +143,53 @@ WebKeyBoard.prototype.specialKeys = {};
 
 WebKeyBoard.prototype.specialKeys.left = {
 	character: "&#x25B2;",
-	onpress: function (target) {
+	pressHandler: function (target) {
 		
 	}
 };
 
 WebKeyBoard.prototype.specialKeys.up = {
 	character: "&#x25B2;",
-	onpress: function (target) {
+	pressHandler: function (target) {
 		
 	}
 };
 
 WebKeyBoard.prototype.specialKeys.down = {
 	character: "&#x25B2;",
-	onpress: function (target) {
+	pressHandler: function (target) {
 		
 	}
 };
 
 WebKeyBoard.prototype.specialKeys.delete = {
 	character: "&#x25B2;",
-	onpress: function (target) {
+	pressHandler: function (target) {
 		
 	}
 };
 
 WebKeyBoard.prototype.specialKeys.tab = {
 	character: "&#x25B2;",
-	onpress: function (target) {
+	pressHandler: function (target) {
 		
 	}
 };
 
 WebKeyBoard.prototype.specialKeys.shift = {
 	character: "&#x25B2;",
-	onpress: function (target) {
+	pressHandler: function (target) {
 		
 	}
 };
 
 WebKeyBoard.prototype.specialKeys.enter = {
 	character: "&#x25B2;",
-	onpress: function (target) {
+	pressHandler: function (target) {
 		
 	}
+};
+
+WebKeyBoard.prototype.specialKeys["32"] = {
+	character: "Sp."
 };

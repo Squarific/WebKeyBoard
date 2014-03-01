@@ -1,0 +1,17 @@
+<html>
+	<head>
+		<title>WebKeyBoard Keyboarddesigner</title>
+		<script>
+			var keyArray = [];
+			document.addEventListener("keypress", function (event) {
+				keyArray.push(event.which);
+				document.getElementById("output").innerText = JSON.stringify(keyArray);
+			});
+		</script>
+	</head>
+	<body onload="onload()">
+		Press keys to get the keyboardrow array.
+		<br/>
+		<div id="output"></div>
+	</body>
+</html>

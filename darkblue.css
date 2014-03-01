@@ -6,6 +6,7 @@
 	box-sizing:border-box;
 	overflow:hidden;
 	border:7px rgb(64, 81, 99) solid;
+	background:rgb(64, 81, 99);
 	white-space: nowrap;
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
