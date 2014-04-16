@@ -1,5 +1,8 @@
 WebKeyBoard
 ===========
+Demo
+====
+http://squarific.github.io/WebKeyBoard/demo.html
 How To Use
 ==========
 `
